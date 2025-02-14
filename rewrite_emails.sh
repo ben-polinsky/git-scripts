@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Get all unique emails from the git repository
-emails=$(git log --format='%ae' | sort | uniq)
+# Get all unique emails and names from the git repository
+emails_and_names=$(git log --format='%an <%ae>' | sort | uniq)
 
 # Create or overwrite the emails_gh.mailmap file
 output_file="emails_gh.mailmap"
@@ -20,16 +20,18 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-# Loop through each email and format it
-for email in $emails; do
-  username=$(echo $email | cut -d '@' -f 1)
+# Loop through each email and name and format it
+while IFS= read -r entry; do
+  name=$(echo "$entry" | sed -E 's/(.*) <.*/\1/')
+  email=$(echo "$entry" | sed -E 's/.* <(.*)>/\1/')
+  username=$(echo "$email" | cut -d '@' -f 1)
   noreply_username=$username
   if $strip_id; then
     noreply_username=$(echo $username | sed 's/[0-9+]//g')
   fi
-  noreply_email="$username@users.noreply.github.com"
-  echo "$noreply_username <$noreply_email> $username <$email>" >> $output_file
-done
+  noreply_email="$noreply_username@users.noreply.github.com"
+  echo "$name <$noreply_email> $name <$email>" >> $output_file
+done <<< "$emails_and_names"
 
 echo "emails_gh.mailmap file has been created."
 
