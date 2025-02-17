@@ -32,7 +32,7 @@ By default, git-filter-repo requires you to have a fresh clone of the repo as a 
 
 ## Husky
 
-Husky is a tool that allows you to set up Git hooks easily. You can use Husky to enforce the email format for all commits in your repository.
+[Husky](https://github.com/typicode/husky) is a tool that allows you to set up Git hooks easily. You can use Husky to enforce the email format for all commits in your repository.
 
 ### Setup
 
